@@ -1,4 +1,4 @@
-package com.example.aws-sdk-test;
+package com.example.SDKTest;
 
 /**
  * Hello world!
