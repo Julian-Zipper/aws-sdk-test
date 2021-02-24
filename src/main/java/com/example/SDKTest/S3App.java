@@ -21,7 +21,9 @@ public class S3App {
     
     public S3App() {
         this.s3Region = Region.EU_WEST_1;
-        this.s3Client = S3Client.builder().region(this.s3Region).build();
+        this.s3Client = S3Client.builder()
+            .region(this.s3Region)
+            .build();
 
         init();
     }
