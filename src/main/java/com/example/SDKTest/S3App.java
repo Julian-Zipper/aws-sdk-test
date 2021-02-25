@@ -1,4 +1,4 @@
-package com.example.SDKTest;
+package com.example.sdktest;
 
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;

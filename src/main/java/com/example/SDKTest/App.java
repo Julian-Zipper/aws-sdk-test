@@ -1,4 +1,4 @@
-package com.example.SDKTest;
+package com.example.sdktest;
 
 import java.io.IOException;
 
