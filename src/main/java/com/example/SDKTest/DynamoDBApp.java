@@ -1,7 +1,10 @@
 package com.example.sdktest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
 
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -23,6 +26,7 @@ public class DynamoDBApp {
     Region dynamoDBRegion;
     DynamoDbClient dynamoDBClient;
     DynamoDbEnhancedClient dynamoDBClientEnhanced;
+    int itemCount;
 
     public DynamoDBApp() {
         this.dynamoDBRegion = Region.EU_WEST_1;
@@ -43,6 +47,7 @@ public class DynamoDBApp {
 
         getTableInfo(tableName);
         scanTable(tableName);
+        generateRecipe();
         finishUp();
     }
 
@@ -74,12 +79,13 @@ public class DynamoDBApp {
         System.out.format("Table name : %s\n", tableInfo.tableName());
         System.out.format("Table ARN : %s\n", tableInfo.tableArn());
         System.out.format("Status : %s\n", tableInfo.tableStatus());
-        System.out.format("Item count : %d\n", tableInfo.itemCount().longValue());
         System.out.format("Size (bytes) : %d\n", tableInfo.tableSizeBytes().longValue());
+        System.out.format("Item count : %d\n", tableInfo.itemCount().longValue());
+
+        this.itemCount = tableInfo.itemCount().intValue();
 
         List<AttributeDefinition> attributes = tableInfo.attributeDefinitions();
         System.out.println("Attributes:");
-
         for (AttributeDefinition a: attributes) {
             System.out.format("  %s (%s)\n", a.attributeName(), a.attributeType());
         }
@@ -122,9 +128,44 @@ public class DynamoDBApp {
         System.out.println("--------------------------");
     }
 
-
     public void putData() {
 
+    }
+
+    public void generateRecipe() {
+        List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
+        List<String> postModifiers = Arrays.asList("a la chef", "burger", "salad", "poke bowl", "stir-fry", "dip", "stew", "casserole", "sauce", "breakfest", "dinner", "dessert", "rolls", "sandwhich");
+        List<String> carbs = Arrays.asList("potatoes", "rice", "pasta", "quinoa", "toast", "slices of bread", "flour");
+        List<String> vegetables = Arrays.asList("tomatoes", "carrots", "onions", "mushrooms", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snaps", "bell peppers", "chili pepper", "avocado");
+        List<String> proteins = Arrays.asList("chicken", "beef", "tofu", "tempeh", "beans", "halloumi", "mozzerella");
+        List<String> additions = Arrays.asList( "feta cheese", "parmesan cheese", "cashews", "pine nuts", "thyme", "basil", "honey", "tomato paste", "soy sauce", "lemon juice", "mayo", "creme fraiche", "balsamic vinegar", "cumin", "parsley", "turmeric");
+
+        List<String> ingredients = new ArrayList<String>();
+        ingredients.add(getRandom(carbs));
+        ingredients.addAll(getRandom(vegetables, 3));
+        ingredients.addAll(getRandom(proteins, 2));
+        String mainIngredient = getRandom(ingredients);
+        ingredients.addAll(getRandom(additions, 4));
+
+        String recipeName = String.format("%s %s %s", getRandom(adjectives), mainIngredient, getRandom(postModifiers));
+        int recipeId = this.itemCount + 1;
+
+        System.out.println("Generating new recipe...");
+        System.out.format("recipe id (%s)\n", recipeId);
+        System.out.format("recipe name (%s)\n", recipeName);
+        System.out.format("ingredients (%s)\n", ingredients.toString());
+        System.out.printf("%n");
+
+    }
+
+    public List<String> getRandom(List<String> list, int max) {
+        Collections.shuffle(list);
+        int num = (int) (1 + (Math.random() * (max - 1)));
+        return list.subList(0, num);
+    }
+
+    public String getRandom(List<String> list) {
+        return list.get((int)(Math.random() * list.size()));
     }
     
     /**
