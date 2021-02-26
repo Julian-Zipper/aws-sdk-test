@@ -1,8 +1,11 @@
 package com.example.sdktest;
 
+import java.util.Iterator;
 import java.util.List;
 
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
@@ -39,6 +42,7 @@ public class DynamoDBApp {
         String tableName = "recipes";
 
         getTableInfo(tableName);
+        scanTable(tableName);
         finishUp();
     }
 
@@ -79,21 +83,45 @@ public class DynamoDBApp {
         for (AttributeDefinition a: attributes) {
             System.out.format("  %s (%s)\n", a.attributeName(), a.attributeType());
         }
+
+        System.out.printf("%n");
     }
 
     /**
-     * Retrieves info from all items in DynamoDB Table and prints it out to console
+     * Scans table for items and prints them out to the console
      */
-    public void getTableItems(String tableName) {
+    public void scanTable(String tableName) {
+        try {
+            DynamoDbTable<Recipe> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
+            Iterator<Recipe> results = table.scan().items().iterator();
+            printRecipes(results);
 
+        } catch (DynamoDbException e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            System.exit(1);
+        }
     }
 
     /**
-     * Prints Table Items in a console readable format
+     * Prints all Recipes in the scanned tabel to the console
      */
-    public void printTableData() {
-
+    public void printRecipes(Iterator<Recipe> recipes) {
+        System.out.println("Recipes:");
+        System.out.println("--------------------------");
+        recipes.forEachRemaining((recipe) -> printRecipe(recipe));
+        System.out.printf("%n");
     }
+
+    /**
+     * Prints recipe fields in a console readable format
+     */
+    public void printRecipe(Recipe recipe) {
+        System.out.format("  id (%s)\n", recipe.getId());
+        System.out.format("  name (%s)\n", recipe.getName());
+        System.out.format("  ingredients (%s)\n", recipe.getIngredients().toString());
+        System.out.println("--------------------------");
+    }
+
 
     public void putData() {
 
