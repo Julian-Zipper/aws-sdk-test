@@ -73,6 +73,24 @@ public class DynamoDBApp {
             System.out.format("  %s (%s)\n", a.attributeName(), a.attributeType());
         }
     }
+
+    /**
+     * Retrieves info from all items in DynamoDB Table and prints it out to console
+     */
+    public void getTableItems(String tableName) {
+        
+    }
+
+    /**
+     * Prints Table Items in a console readable format
+     */
+    public void printTableData() {
+
+    }
+
+    public void putData() {
+
+    }
     
     /**
      * Finishing steps of this app, before shutting off
