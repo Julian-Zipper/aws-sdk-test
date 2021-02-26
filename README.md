@@ -1,10 +1,10 @@
 ### Packaging with Maven:
-1. mvn package
-2. mvn exec:java
+1. `mvn package`
+2. `mvn exec:java`
 
 ### Compiling with Maven:
-1. mvn clean validate
-2. mvn compile
+1. `mvn clean validate`
+2. `mvn compile`
 
 ### How to get VSCode intellisense to work properly
 1. Close and Relaunch VSCode, to no avail
