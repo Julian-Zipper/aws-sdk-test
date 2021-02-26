@@ -2,6 +2,7 @@ package com.example.sdktest;
 
 import java.util.List;
 
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
@@ -18,13 +19,19 @@ public class DynamoDBApp {
     
     Region dynamoDBRegion;
     DynamoDbClient dynamoDBClient;
+    DynamoDbEnhancedClient dynamoDBClientEnhanced;
 
     public DynamoDBApp() {
         this.dynamoDBRegion = Region.EU_WEST_1;
+
         this.dynamoDBClient = DynamoDbClient.builder()
             .region(this.dynamoDBRegion)
             .build();
-
+        
+        this.dynamoDBClientEnhanced = DynamoDbEnhancedClient.builder()
+            .dynamoDbClient(this.dynamoDBClient)
+            .build();
+        
         init();
     }
 
@@ -78,7 +85,7 @@ public class DynamoDBApp {
      * Retrieves info from all items in DynamoDB Table and prints it out to console
      */
     public void getTableItems(String tableName) {
-        
+
     }
 
     /**

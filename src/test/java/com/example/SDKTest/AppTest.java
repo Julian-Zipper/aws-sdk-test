@@ -1,4 +1,4 @@
-package com.example.SDKTest;
+package com.example.sdktest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
