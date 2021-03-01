@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Collections;
 
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -48,6 +50,7 @@ public class DynamoDBApp {
         getTableInfo(tableName);
         scanTable(tableName);
         generateRecipe();
+        updateItemsWithServingSuggestions(tableName);
         finishUp();
     }
 
@@ -102,7 +105,8 @@ public class DynamoDBApp {
             Iterator<Recipe> results = table.scan().items().iterator();
             printRecipes(results);
 
-        } catch (DynamoDbException e) {
+        }
+        catch (DynamoDbException e) {
             System.err.println(e.awsErrorDetails().errorMessage());
             System.exit(1);
         }
@@ -128,34 +132,30 @@ public class DynamoDBApp {
         System.out.println("--------------------------");
     }
 
-    public void putData() {
-
-    }
-
     public void generateRecipe() {
-        List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
-        List<String> postModifiers = Arrays.asList("a la chef", "burger", "salad", "poke bowl", "stir-fry", "dip", "stew", "casserole", "sauce", "breakfest", "dinner", "dessert", "rolls", "sandwhich");
-        List<String> carbs = Arrays.asList("potatoes", "rice", "pasta", "quinoa", "toast", "slices of bread", "flour");
-        List<String> vegetables = Arrays.asList("tomatoes", "carrots", "onions", "mushrooms", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snaps", "bell peppers", "chili pepper", "avocado");
+        List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Finger-lickin", "Simple the best", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
+        List<String> postModifiers = Arrays.asList("a la chef", "burger", "salad", "poke bowl", "stir-fry", "soup", "stew", "casserole", "sauce", "breakfest", "dinner", "rolls", "sandwich", "curry", "mash-up");
+        List<String> vegetables = Arrays.asList("tomatoes", "potatoes", "carrots", "lettuce", "spinach", "kale", "onions", "leek", "mushrooms", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snaps", "bell peppers", "chili pepper", "avocado");
         List<String> proteins = Arrays.asList("chicken", "beef", "tofu", "tempeh", "beans", "halloumi", "mozzerella");
-        List<String> additions = Arrays.asList( "feta cheese", "parmesan cheese", "cashews", "pine nuts", "thyme", "basil", "honey", "tomato paste", "soy sauce", "lemon juice", "mayo", "creme fraiche", "balsamic vinegar", "cumin", "parsley", "turmeric");
-
+        List<String> additions = Arrays.asList("feta cheese", "parmesan cheese", "flour", "cornstarch", "cashews", "pine nuts", "thyme", "basil", "spring onion", "honey", "tomato paste", "soy sauce", "lemon juice", "mayo", "greek yoghurt", "creme fraiche", "balsamic vinegar", "cumin", "parsley", "turmeric", "MSG");
+        List<String> alongsides = Arrays.asList("pasta", "quinoa", "rice", "bulgur", "fries", "sweet-potato fries", "mashed potatoes", "toast", "naan", "fries", "chips", "tortillas", "bread", "flatbread", "salad", "dip");
         List<String> ingredients = new ArrayList<String>();
-        ingredients.add(getRandom(carbs));
-        ingredients.addAll(getRandom(vegetables, 3));
+
+        ingredients.addAll(getRandom(vegetables, 4));
         ingredients.addAll(getRandom(proteins, 2));
         String mainIngredient = getRandom(ingredients);
-        ingredients.addAll(getRandom(additions, 4));
+        ingredients.addAll(getRandom(additions, 5));
 
         String recipeName = String.format("%s %s %s", getRandom(adjectives), mainIngredient, getRandom(postModifiers));
         int recipeId = this.itemCount + 1;
+        String servingSuggestions = getRandom(alongsides, 2).stream().collect(Collectors.joining(", or"));
 
         System.out.println("Generating new recipe...");
         System.out.format("recipe id (%s)\n", recipeId);
         System.out.format("recipe name (%s)\n", recipeName);
         System.out.format("ingredients (%s)\n", ingredients.toString());
+        System.out.format("Serve with (%s)\n", servingSuggestions);
         System.out.printf("%n");
-
     }
 
     public List<String> getRandom(List<String> list, int max) {
