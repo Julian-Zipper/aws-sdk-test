@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Collections;
 
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
@@ -46,11 +45,15 @@ public class DynamoDBApp {
 
     public void init() {
         String tableName = "recipes";
+        
+        // TODO: create DynamoDbTable<Recipe> table here, instead of in EVERY method in this class
 
         getTableInfo(tableName);
         scanTable(tableName);
-        generateRecipe();
-        updateItemsWithServingSuggestions(tableName);
+
+        Recipe newRecipe = generateRecipe();
+        putTable(tableName, newRecipe);
+
         finishUp();
     }
 
@@ -132,6 +135,23 @@ public class DynamoDBApp {
         System.out.println("--------------------------");
     }
 
+    /**
+     * Places a recipe in the table
+     */
+    public void putTable(String tableName, Recipe recipe) {
+        try {
+            DynamoDbTable<Recipe> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
+            table.putItem(recipe);
+        }
+        catch (DynamoDbException e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            System.exit(1);
+        }
+    }
+
+    /**
+     * A one-time-use method for updating pre-existing table items with a new field + value(s) for that field
+     */
     public void updateItemsWithServingSuggestions(String tableName) {
         try {
             DynamoDbTable<Recipe> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
@@ -145,7 +165,7 @@ public class DynamoDBApp {
 
             for (int i = 0; i < 4; i++) {
                 Key key = Key.builder()
-                    .partitionValue(i)
+                    .partitionValue(i + 1)
                     .build();
                 
                 Recipe recipe = table.getItem(key);
@@ -159,15 +179,21 @@ public class DynamoDBApp {
         }
     }
 
-    public void generateRecipe() {
+    /**
+     * Generates a recipe from random ingredients/keywords.
+     * TODO: extract to own class
+     */
+    public Recipe generateRecipe() {
+        System.out.println("Generating new recipe...");
+
         List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Finger-lickin", "Simple the best", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
         List<String> postModifiers = Arrays.asList("a la chef", "burger", "salad", "poke bowl", "stir-fry", "soup", "stew", "casserole", "sauce", "breakfest", "dinner", "rolls", "sandwich", "curry", "mash-up");
         List<String> vegetables = Arrays.asList("tomatoes", "potatoes", "carrots", "lettuce", "spinach", "kale", "onions", "leek", "mushrooms", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snaps", "bell peppers", "chili pepper", "avocado");
         List<String> proteins = Arrays.asList("chicken", "beef", "tofu", "tempeh", "beans", "halloumi", "mozzerella");
         List<String> additions = Arrays.asList("feta cheese", "parmesan cheese", "flour", "cornstarch", "cashews", "pine nuts", "thyme", "basil", "spring onion", "honey", "tomato paste", "soy sauce", "lemon juice", "mayo", "greek yoghurt", "creme fraiche", "balsamic vinegar", "cumin", "parsley", "turmeric", "MSG");
         List<String> alongsides = Arrays.asList("pasta", "quinoa", "rice", "bulgur", "fries", "sweet potato fries", "mashed potatoes", "toast", "naan", "fries", "chips", "tortillas", "bread", "flatbread", "salad", "dip", "tomato soup", "vegetable soup", "BBQ sauce", "ketchup", "sriracha");
+        
         List<String> ingredients = new ArrayList<String>();
-
         ingredients.addAll(getRandom(vegetables, 4));
         ingredients.addAll(getRandom(proteins, 2));
         String mainIngredient = getRandom(ingredients);
@@ -175,14 +201,17 @@ public class DynamoDBApp {
 
         String recipeName = String.format("%s %s %s", getRandom(adjectives), mainIngredient, getRandom(postModifiers));
         int recipeId = this.itemCount + 1;
-        String servingSuggestions = getRandom(alongsides, 2).stream().collect(Collectors.joining(", or"));
+        List<String> servingSuggestions = getRandom(alongsides, 2);
 
-        System.out.println("Generating new recipe...");
-        System.out.format("recipe id (%s)\n", recipeId);
-        System.out.format("recipe name (%s)\n", recipeName);
-        System.out.format("ingredients (%s)\n", ingredients.toString());
-        System.out.format("Serve with (%s)\n", servingSuggestions);
+        Recipe recipe = new Recipe(recipeId, recipeName, ingredients, servingSuggestions);
+
+        System.out.format("recipe id (%s)\n", recipe.getId());
+        System.out.format("recipe name (%s)\n", recipe.getName());
+        System.out.format("ingredients (%s)\n", recipe.getIngredients().toString());
+        System.out.format("Serve with (%s)\n", recipe.getSuggestionsPrintable());
         System.out.printf("%n");
+
+        return recipe;
     }
 
     public List<String> getRandom(List<String> list, int max) {
