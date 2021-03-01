@@ -12,6 +12,7 @@ public class Recipe {
     private int id;
     private String name;
     private List<String> ingredients;
+    private List<String> servingSuggestions;
     
     public Recipe() {
         this.ingredients = new ArrayList<String>();
@@ -26,4 +27,7 @@ public class Recipe {
 
     public List<String> getIngredients() { return this.ingredients; }
     public void setIngredients(List<String> ingredients) { this.ingredients = ingredients; }
+
+    public List<String> getServingSuggestions() { return this.servingSuggestions; }
+    public void setServingSuggestions(List<String> servingSuggestions) { this.servingSuggestions = servingSuggestions; }
 }

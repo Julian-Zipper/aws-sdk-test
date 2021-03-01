@@ -132,13 +132,40 @@ public class DynamoDBApp {
         System.out.println("--------------------------");
     }
 
+    public void updateItemsWithServingSuggestions(String tableName) {
+        try {
+            DynamoDbTable<Recipe> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
+
+            List<List<String>> additionalInfo = Arrays.asList(
+                Arrays.asList("pasta"),
+                Arrays.asList("flatbread", "sweet potato fries"),
+                Arrays.asList("toast"),
+                Arrays.asList("ketchup", "tomato soup")
+            );
+
+            for (int i = 0; i < 4; i++) {
+                Key key = Key.builder()
+                    .partitionValue(i)
+                    .build();
+                
+                Recipe recipe = table.getItem(key);
+                recipe.setServingSuggestions(additionalInfo.get(i));
+                table.updateItem(recipe);
+            }
+        }
+        catch (DynamoDbException e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            System.exit(1);
+        }
+    }
+
     public void generateRecipe() {
         List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Finger-lickin", "Simple the best", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
         List<String> postModifiers = Arrays.asList("a la chef", "burger", "salad", "poke bowl", "stir-fry", "soup", "stew", "casserole", "sauce", "breakfest", "dinner", "rolls", "sandwich", "curry", "mash-up");
         List<String> vegetables = Arrays.asList("tomatoes", "potatoes", "carrots", "lettuce", "spinach", "kale", "onions", "leek", "mushrooms", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snaps", "bell peppers", "chili pepper", "avocado");
         List<String> proteins = Arrays.asList("chicken", "beef", "tofu", "tempeh", "beans", "halloumi", "mozzerella");
         List<String> additions = Arrays.asList("feta cheese", "parmesan cheese", "flour", "cornstarch", "cashews", "pine nuts", "thyme", "basil", "spring onion", "honey", "tomato paste", "soy sauce", "lemon juice", "mayo", "greek yoghurt", "creme fraiche", "balsamic vinegar", "cumin", "parsley", "turmeric", "MSG");
-        List<String> alongsides = Arrays.asList("pasta", "quinoa", "rice", "bulgur", "fries", "sweet-potato fries", "mashed potatoes", "toast", "naan", "fries", "chips", "tortillas", "bread", "flatbread", "salad", "dip");
+        List<String> alongsides = Arrays.asList("pasta", "quinoa", "rice", "bulgur", "fries", "sweet potato fries", "mashed potatoes", "toast", "naan", "fries", "chips", "tortillas", "bread", "flatbread", "salad", "dip", "tomato soup", "vegetable soup", "BBQ sauce", "ketchup", "sriracha");
         List<String> ingredients = new ArrayList<String>();
 
         ingredients.addAll(getRandom(vegetables, 4));
