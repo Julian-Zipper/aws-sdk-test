@@ -27,7 +27,7 @@ public class DynamoDBApp {
     Region dynamoDBRegion;
     DynamoDbClient dynamoDBClient;
     DynamoDbEnhancedClient dynamoDBClientEnhanced;
-    int itemCount;
+    DynamoDbTable<Recipe> table;
 
     public DynamoDBApp() {
         this.dynamoDBRegion = Region.EU_WEST_1;
@@ -45,16 +45,25 @@ public class DynamoDBApp {
 
     public void init() {
         String tableName = "recipes";
-        
-        // TODO: create DynamoDbTable<Recipe> table here, instead of in EVERY method in this class
+
+        loadTable(tableName);
 
         getTableInfo(tableName);
-        scanTable(tableName);
-
+        scanTable();
         Recipe newRecipe = generateRecipe();
-        putTable(tableName, newRecipe);
+        putTable(newRecipe);
 
         finishUp();
+    }
+
+    public void loadTable(String tableName) {
+        try {
+            this.table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
+        }
+        catch (DynamoDbException e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            System.exit(1);
+        }
     }
 
     /**
@@ -88,8 +97,6 @@ public class DynamoDBApp {
         System.out.format("Size (bytes) : %d\n", tableInfo.tableSizeBytes().longValue());
         System.out.format("Item count : %d\n", tableInfo.itemCount().longValue());
 
-        this.itemCount = tableInfo.itemCount().intValue();
-
         List<AttributeDefinition> attributes = tableInfo.attributeDefinitions();
         System.out.println("Attributes:");
         for (AttributeDefinition a: attributes) {
@@ -102,10 +109,9 @@ public class DynamoDBApp {
     /**
      * Scans table for items and prints them out to the console
      */
-    public void scanTable(String tableName) {
+    public void scanTable() {
         try {
-            DynamoDbTable<Recipe> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
-            Iterator<Recipe> results = table.scan().items().iterator();
+            Iterator<Recipe> results = this.table.scan().items().iterator();
             printRecipes(results);
 
         }
@@ -132,16 +138,16 @@ public class DynamoDBApp {
         System.out.format("  id (%s)\n", recipe.getId());
         System.out.format("  name (%s)\n", recipe.getName());
         System.out.format("  ingredients (%s)\n", recipe.getIngredients().toString());
+        System.out.format("  serve with (%s)\n", recipe.getSuggestionsPrintable());
         System.out.println("--------------------------");
     }
 
     /**
      * Places a recipe in the table
      */
-    public void putTable(String tableName, Recipe recipe) {
+    public void putTable(Recipe recipe) {
         try {
-            DynamoDbTable<Recipe> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
-            table.putItem(recipe);
+            this.table.putItem(recipe);
         }
         catch (DynamoDbException e) {
             System.err.println(e.awsErrorDetails().errorMessage());
@@ -188,9 +194,9 @@ public class DynamoDBApp {
 
         List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Finger-lickin", "Simple the best", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
         List<String> postModifiers = Arrays.asList("a la chef", "burger", "salad", "poke bowl", "stir-fry", "soup", "stew", "casserole", "sauce", "breakfest", "dinner", "rolls", "sandwich", "curry", "mash-up");
-        List<String> vegetables = Arrays.asList("tomatoes", "potatoes", "carrots", "lettuce", "spinach", "kale", "onions", "leek", "mushrooms", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snaps", "bell peppers", "chili pepper", "avocado");
-        List<String> proteins = Arrays.asList("chicken", "beef", "tofu", "tempeh", "beans", "halloumi", "mozzerella");
-        List<String> additions = Arrays.asList("feta cheese", "parmesan cheese", "flour", "cornstarch", "cashews", "pine nuts", "thyme", "basil", "spring onion", "honey", "tomato paste", "soy sauce", "lemon juice", "mayo", "greek yoghurt", "creme fraiche", "balsamic vinegar", "cumin", "parsley", "turmeric", "MSG");
+        List<String> vegetables = Arrays.asList("tomato", "potato", "carrot", "lettuce", "spinach", "kale", "onion", "leek", "mushroom", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snap", "bell pepper", "chili pepper", "avocado");
+        List<String> proteins = Arrays.asList("chicken", "beef", "tofu", "tempeh", "bean", "halloumi", "mozzerella");
+        List<String> additions = Arrays.asList("feta cheese", "parmesan cheese", "flour", "cornstarch", "cashew", "pine nut", "thyme", "basil", "spring onion", "honey", "tomato paste", "soy sauce", "lemon juice", "mayo", "greek yoghurt", "creme fraiche", "balsamic vinegar", "cumin", "parsley", "turmeric", "MSG");
         List<String> alongsides = Arrays.asList("pasta", "quinoa", "rice", "bulgur", "fries", "sweet potato fries", "mashed potatoes", "toast", "naan", "fries", "chips", "tortillas", "bread", "flatbread", "salad", "dip", "tomato soup", "vegetable soup", "BBQ sauce", "ketchup", "sriracha");
         
         List<String> ingredients = new ArrayList<String>();
@@ -200,10 +206,9 @@ public class DynamoDBApp {
         ingredients.addAll(getRandom(additions, 5));
 
         String recipeName = String.format("%s %s %s", getRandom(adjectives), mainIngredient, getRandom(postModifiers));
-        int recipeId = this.itemCount + 1;
         List<String> servingSuggestions = getRandom(alongsides, 2);
 
-        Recipe recipe = new Recipe(recipeId, recipeName, ingredients, servingSuggestions);
+        Recipe recipe = new Recipe(recipeName, ingredients, servingSuggestions);
 
         System.out.format("recipe id (%s)\n", recipe.getId());
         System.out.format("recipe name (%s)\n", recipe.getName());
