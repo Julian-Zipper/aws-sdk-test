@@ -127,19 +127,8 @@ public class DynamoDBApp {
     public void printRecipes(Iterator<Recipe> recipes) {
         System.out.println("Recipes:");
         System.out.println("--------------------------");
-        recipes.forEachRemaining((recipe) -> printRecipe(recipe));
+        recipes.forEachRemaining((recipe) -> recipe.print());
         System.out.printf("%n");
-    }
-
-    /**
-     * Prints recipe fields in a console readable format
-     */
-    public void printRecipe(Recipe recipe) {
-        System.out.format("  id (%s)\n", recipe.getId());
-        System.out.format("  name (%s)\n", recipe.getName());
-        System.out.format("  ingredients (%s)\n", recipe.getIngredients().toString());
-        System.out.format("  serve with (%s)\n", recipe.getSuggestionsPrintable());
-        System.out.println("--------------------------");
     }
 
     /**
