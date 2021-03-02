@@ -127,7 +127,10 @@ public class DynamoDBApp {
     public void printRecipes(Iterator<Recipe> recipes) {
         System.out.println("Recipes:");
         System.out.println("--------------------------");
-        recipes.forEachRemaining((recipe) -> recipe.print());
+        recipes.forEachRemaining((recipe) -> {
+            recipe.print();
+            System.out.println("--------------------------");
+        });
         System.out.printf("%n");
     }
 

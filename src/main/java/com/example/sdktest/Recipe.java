@@ -59,6 +59,5 @@ public class Recipe {
         System.out.format("  name (%s)\n", this.getName());
         System.out.format("  ingredients (%s)\n", this.getIngredients().toString());
         System.out.format("  serve with (%s)\n", this.getSuggestionsPrintable());
-        System.out.println("--------------------------");
     }
 }

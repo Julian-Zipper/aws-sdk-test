@@ -73,11 +73,7 @@ public class RecipeGenerator {
 
         Recipe recipe = new Recipe(recipeName, ingredients, servingSuggestions);
 
-        System.out.format("recipe id (%s)\n", recipe.getId());
-        System.out.format("recipe name (%s)\n", recipe.getName());
-        System.out.format("ingredients (%s)\n", recipe.getIngredients().toString());
-        System.out.format("Serve with (%s)\n", recipe.getSuggestionsPrintable());
-        System.out.printf("%n");
+        recipe.print();
 
         return recipe;
     }
