@@ -1,10 +1,8 @@
 package com.example.sdktest;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collections;
 
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -41,6 +39,9 @@ public class DynamoDBApp {
             .build();
     }
 
+    /**
+     * Describes the behaviour of this class on loading up
+     */
     public void init() {
         String tableName = "recipes";
 
@@ -51,6 +52,10 @@ public class DynamoDBApp {
         finishUp();
     }
 
+    /**
+     * Preload the DynamoDB Table since it will be used in multiple methods
+     * TODO: when loading multiple tables (Recipes, Ingredients, Groceries, etc.) change this to returning a table instead of setting a field
+     */
     public void loadTable(String tableName) {
         try {
             this.table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));

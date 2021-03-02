@@ -44,6 +44,9 @@ public class Recipe {
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * Serving Suggestions in a more human-friendly format (no brackets and commas)
+     */
     public String getSuggestionsPrintable() {
         return this.servingSuggestions.stream().collect(Collectors.joining(", or"));
     }

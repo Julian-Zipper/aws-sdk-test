@@ -57,6 +57,7 @@ public class RecipeGenerator {
 
     /**
      * Generates a recipe from random ingredients/keywords.
+     * TODO: breakdown in multiple steps/methods to make the whole thing more readable
      */
     public Recipe randomRecipe() {
         System.out.println("Generating new recipe...");

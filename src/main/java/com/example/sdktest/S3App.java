@@ -28,6 +28,9 @@ public class S3App {
         init();
     }
 
+    /**
+     * Describes the behaviour of this class on loading up
+     */
     public void init() {
         String bucketName = "bucket" + System.currentTimeMillis();
         String key = "key" + System.currentTimeMillis();
