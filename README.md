@@ -1,9 +1,9 @@
-### Packaging with Maven:
+### Packaging with Maven
 1. `mvn package`
 2. `mvn exec:java`
 3. or a oneliner: `mvn package exec:java`
 
-### Compiling with Maven:
+### Compiling with Maven
 1. `mvn clean validate`
 2. `mvn compile`
 
@@ -13,6 +13,15 @@
 1. Close and Relaunch VSCode, to no avail (x4)
 3. ?????
 4. :sos:
+
+### Next steps
+- refactor recipe generation to own class
+- javadoc above every method
+- another table for dinner weekplanning
+- another table for grocery lists
+- connection/junction between recipes/weekplanning/groceries
+- AWS trigger when a grocery list is uploaded
+- send a mail from this trigger (SES, SNS)
 
 ### Some Relevant Dynamo info:
 - Amazon DynamoDB documentation - Getting Started with Java and DynamoDB: [link](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.Java.html)
