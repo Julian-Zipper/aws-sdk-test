@@ -45,12 +45,9 @@ public class DynamoDBApp {
         String tableName = "recipes";
 
         loadTable(tableName);
-
         getTableInfo(tableName);
         scanTable();
-        Recipe newRecipe = generateRecipe();
-        putTable(newRecipe);
-
+        generateRecipe();
         finishUp();
     }
 
@@ -130,6 +127,15 @@ public class DynamoDBApp {
     }
 
     /**
+     * Generates a recipe and puts it into the DynamoDB Table
+     */
+    public void generateRecipe() {
+        RecipeGenerator generator = new RecipeGenerator();
+        Recipe newRecipe = generator.randomRecipe();
+        putTable(newRecipe);
+    }
+
+    /**
      * Places a recipe in the table
      */
     public void putTable(Recipe recipe) {
@@ -144,6 +150,7 @@ public class DynamoDBApp {
 
     /**
      * A one-time-use method for updating pre-existing table items with a new field + value(s) for that field
+     * This method is not used anymore, but kept just to showcase how to retrieve & update certain DynamoDB items.
      */
     public void updateItemsWithServingSuggestions(String tableName) {
         try {
@@ -170,50 +177,6 @@ public class DynamoDBApp {
             System.err.println(e.awsErrorDetails().errorMessage());
             System.exit(1);
         }
-    }
-
-    /**
-     * Generates a recipe from random ingredients/keywords.
-     * TODO: extract to own class
-     */
-    public Recipe generateRecipe() {
-        System.out.println("Generating new recipe...");
-
-        List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Finger-lickin", "Simply the best", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
-        List<String> postModifiers = Arrays.asList("a la chef", "burger", "salad", "poke bowl", "stir-fry", "soup", "stew", "casserole", "sauce", "breakfest", "dinner", "rolls", "sandwich", "curry", "mash-up");
-        List<String> vegetables = Arrays.asList("tomato", "potato", "carrot", "lettuce", "spinach", "kale", "onion", "leek", "mushroom", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snap", "bell pepper", "chili pepper", "avocado");
-        List<String> proteins = Arrays.asList("chicken", "beef", "tofu", "tempeh", "bean", "halloumi", "mozzerella");
-        List<String> additions = Arrays.asList("feta cheese", "parmesan cheese", "flour", "cornstarch", "cashew", "pine nut", "thyme", "basil", "spring onion", "honey", "tomato paste", "soy sauce", "lemon juice", "mayo", "greek yoghurt", "creme fraiche", "balsamic vinegar", "cumin", "parsley", "turmeric", "MSG");
-        List<String> alongsides = Arrays.asList("pasta", "quinoa", "rice", "bulgur", "fries", "sweet potato fries", "mashed potatoes", "toast", "naan", "fries", "chips", "tortillas", "bread", "flatbread", "salad", "dip", "tomato soup", "vegetable soup", "BBQ sauce", "ketchup", "sriracha");
-        
-        List<String> ingredients = new ArrayList<String>();
-        ingredients.addAll(getRandom(vegetables, 4));
-        ingredients.addAll(getRandom(proteins, 2));
-        String mainIngredient = getRandom(ingredients);
-        ingredients.addAll(getRandom(additions, 5));
-
-        String recipeName = String.format("%s %s %s", getRandom(adjectives), mainIngredient, getRandom(postModifiers));
-        List<String> servingSuggestions = getRandom(alongsides, 2);
-
-        Recipe recipe = new Recipe(recipeName, ingredients, servingSuggestions);
-
-        System.out.format("recipe id (%s)\n", recipe.getId());
-        System.out.format("recipe name (%s)\n", recipe.getName());
-        System.out.format("ingredients (%s)\n", recipe.getIngredients().toString());
-        System.out.format("Serve with (%s)\n", recipe.getSuggestionsPrintable());
-        System.out.printf("%n");
-
-        return recipe;
-    }
-
-    public List<String> getRandom(List<String> list, int max) {
-        Collections.shuffle(list);
-        int num = (int) (1 + (Math.random() * (max - 1)));
-        return list.subList(0, num);
-    }
-
-    public String getRandom(List<String> list) {
-        return list.get((int)(Math.random() * list.size()));
     }
     
     /**
