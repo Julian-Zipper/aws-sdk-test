@@ -192,7 +192,7 @@ public class DynamoDBApp {
     public Recipe generateRecipe() {
         System.out.println("Generating new recipe...");
 
-        List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Finger-lickin", "Simple the best", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
+        List<String> adjectives = Arrays.asList("Delicious", "Funky", "Must-have", "Finger-lickin", "Simply the best", "Glazed", "Roasted", "Oven-baked", "Quick&dirty", "Easy-peasy", "Healthy", "Pickled", "Supreme");
         List<String> postModifiers = Arrays.asList("a la chef", "burger", "salad", "poke bowl", "stir-fry", "soup", "stew", "casserole", "sauce", "breakfest", "dinner", "rolls", "sandwich", "curry", "mash-up");
         List<String> vegetables = Arrays.asList("tomato", "potato", "carrot", "lettuce", "spinach", "kale", "onion", "leek", "mushroom", "garlic", "celery", "corn", "cauliflower", "broccoli", "peas", "sugar snap", "bell pepper", "chili pepper", "avocado");
         List<String> proteins = Arrays.asList("chicken", "beef", "tofu", "tempeh", "bean", "halloumi", "mozzerella");
