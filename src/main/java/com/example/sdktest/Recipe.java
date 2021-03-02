@@ -47,4 +47,15 @@ public class Recipe {
     public String getSuggestionsPrintable() {
         return this.servingSuggestions.stream().collect(Collectors.joining(", or"));
     }
+
+    /**
+     * Prints recipe fields in a console readable format
+     */
+    public void print() {
+        System.out.format("  id (%s)\n", this.getId());
+        System.out.format("  name (%s)\n", this.getName());
+        System.out.format("  ingredients (%s)\n", this.getIngredients().toString());
+        System.out.format("  serve with (%s)\n", this.getSuggestionsPrintable());
+        System.out.println("--------------------------");
+    }
 }
