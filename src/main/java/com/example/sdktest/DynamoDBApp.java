@@ -39,8 +39,6 @@ public class DynamoDBApp {
         this.dynamoDBClientEnhanced = DynamoDbEnhancedClient.builder()
             .dynamoDbClient(this.dynamoDBClient)
             .build();
-        
-        init();
     }
 
     public void init() {
