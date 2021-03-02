@@ -22,6 +22,7 @@ public class RecipeGenerator {
     /**
      * Populates lists of strings with ingredients/keywords
      * TODO: save ingredients/keywords in its own DynamoDB Table, and extract them from there instead of using hardcoded values.
+     * TODO: break additions up in additions and spices
      */
     public void populateLists() {
         adjectives = Arrays.asList(

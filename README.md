@@ -1,11 +1,12 @@
-### Packaging with Maven
+### Running the code:
 1. `mvn package`
-2. `mvn exec:java`
+2. `mvn exec:java` (everytime you want to run the code)
 3. or a oneliner: `mvn package exec:java`
 
-### Compiling with Maven
+### Checking to see if everything compiles:
 1. `mvn clean validate`
 2. `mvn compile`
+3. or a oneliner: `mvn clean validate compile`
 
 ### How to get VSCode intellisense to work properly
 1. Close and Relaunch VSCode, to no avail
