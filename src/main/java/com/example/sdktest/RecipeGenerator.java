@@ -58,7 +58,6 @@ public class RecipeGenerator {
 
     /**
      * Generates a recipe from random ingredients/keywords.
-     * TODO: breakdown in multiple steps/methods to make the whole thing more readable
      */
     public Recipe randomRecipe() {
         System.out.println("Generating new recipe...");
@@ -66,7 +65,7 @@ public class RecipeGenerator {
         List<String> ingredients = new ArrayList<String>();
         ingredients.addAll(getRandom(vegetables, 4));
         ingredients.addAll(getRandom(proteins, 2));
-        String mainIngredient = getRandom(ingredients);
+        String mainIngredient = getRandom(ingredients); // main ingredient is always a vegetable/protein, not an additional ingredient
         ingredients.addAll(getRandom(additions, 5));
 
         String recipeName = String.format("%s %s %s", getRandom(adjectives), mainIngredient, getRandom(postModifiers));

@@ -16,13 +16,21 @@
 4. :sos:
 
 ### Next steps
-- refactor recipe generation to own class
-- javadoc above every method
+- ~~refactor recipe generation to own class~~
+- ~~javadoc above every method~~
 - another table for dinner weekplanning
+- update DynamoDBApp.java to handle multiple tables instead of just the recipes table
 - another table for grocery lists
+- another table for ingredients
+- another table for populating the recipe generator with keywords (no longer use the hardcoded values)
 - connection/junction between recipes/weekplanning/groceries
 - AWS trigger when a grocery list is uploaded
 - send a mail from this trigger (SES, SNS)
+- send a mail at the start of the week with the dinner weekplanning (or manually with the SDK for SES and a call in the code, or through the backend/API)
+
+## Future steps
+- backend/API to interact with the database, where calls can be made to Create/Update/Delete Recipes, ingredients, grocery lists, etc.
+- frontend to interact with the backend/API, where you can create new Recipes, grocery lists, tweak the recipe generator, etc.
 
 ### Some Relevant Dynamo info:
 - Amazon DynamoDB documentation - Getting Started with Java and DynamoDB: [link](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.Java.html)
