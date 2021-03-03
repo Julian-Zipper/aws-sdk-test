@@ -28,11 +28,13 @@
 ### Next steps
 - ~~refactor recipe generation to own class~~
 - ~~javadoc above every method~~
+- ~~another table for populating the recipe generator with keywords (no longer use the hardcoded values)~~
+- ~~update DynamoDBApp.java to handle multiple tables instead of just the recipes table~~
+- add a local DynamoDB instance for running integration tests
+- write some unit &/ integration tests
 - another table for dinner weekplanning
-- update DynamoDBApp.java to handle multiple tables instead of just the recipes table
 - another table for grocery lists
 - another table for ingredients
-- another table for populating the recipe generator with keywords (no longer use the hardcoded values)
 - connection/junction between recipes/weekplanning/groceries
 - AWS trigger when a grocery list is uploaded
 - send a mail from this trigger (SES, SNS)
