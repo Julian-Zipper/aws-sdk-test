@@ -37,6 +37,7 @@
 - Enhanced DynamoDB client in the AWS SDK for Java v2: [link](https://aws.amazon.com/blogs/developer/introducing-enhanced-dynamodb-client-in-the-aws-sdk-for-java-v2/)
 - Java Annotations for DynamoDB: [link](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.Annotations.html)
 - AWS SDK examples for Enhanced DynamoDB client: [link](https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/javav2/example_code/dynamodb/src/main/java/com/example/dynamodb)
+- Running DynamoDB locally: [link](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
 
 ### Some relevant Spring info:
 - DynamoDB in Spring Boot App using Spring Data: [link](https://www.baeldung.com/spring-data-dynamodb)

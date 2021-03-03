@@ -25,7 +25,6 @@ public class DynamoDBApp {
     Region dynamoDBRegion;
     DynamoDbClient dynamoDBClient;
     DynamoDbEnhancedClient dynamoDBClientEnhanced;
-    DynamoDbTable<Recipe> table;
 
     public DynamoDBApp() {
         this.dynamoDBRegion = Region.EU_WEST_1;
@@ -37,33 +36,6 @@ public class DynamoDBApp {
         this.dynamoDBClientEnhanced = DynamoDbEnhancedClient.builder()
             .dynamoDbClient(this.dynamoDBClient)
             .build();
-    }
-
-    /**
-     * Describes the behaviour of this class on loading up
-     */
-    public void init() {
-        String tableName = "recipes";
-
-        loadTable(tableName);
-        getTableInfo(tableName);
-        scanTable();
-        generateRecipe();
-        finishUp();
-    }
-
-    /**
-     * Preload the DynamoDB Table since it will be used in multiple methods
-     * TODO: when loading multiple tables (Recipes, Ingredients, Groceries, etc.) change this to returning a table instead of setting a field
-     */
-    public void loadTable(String tableName) {
-        try {
-            this.table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
-        }
-        catch (DynamoDbException e) {
-            System.err.println(e.awsErrorDetails().errorMessage());
-            System.exit(1);
-        }
     }
 
     /**
@@ -109,9 +81,10 @@ public class DynamoDBApp {
     /**
      * Scans table for items and prints them out to the console
      */
-    public void scanTable() {
+    public void scanTable(String tableName) {
         try {
-            Iterator<Recipe> results = this.table.scan().items().iterator();
+            DynamoDbTable<Recipe> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
+            Iterator<Recipe> results = table.scan().items().iterator();
             printRecipes(results);
 
         }
@@ -134,26 +107,38 @@ public class DynamoDBApp {
         System.out.printf("%n");
     }
 
-    /**
-     * Generates a recipe and puts it into the DynamoDB Table
-     */
-    public void generateRecipe() {
-        RecipeGenerator generator = new RecipeGenerator();
-        Recipe newRecipe = generator.randomRecipe();
-        putTable(newRecipe);
-    }
 
     /**
      * Places a recipe in the table
      */
-    public void putTable(Recipe recipe) {
+    public void putRecipe(String tableName, Recipe recipe) {
         try {
-            this.table.putItem(recipe);
+            DynamoDbTable<Recipe> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(Recipe.class));
+            table.putItem(recipe);
         }
         catch (DynamoDbException e) {
             System.err.println(e.awsErrorDetails().errorMessage());
             System.exit(1);
         }
+    }
+
+    /**
+     * Gets the necessary generationData for the recipeGenerator, results still need to be processed.
+     */
+    public Iterator<GenerationData> getGenerationData(String tableName) {
+        try {
+            System.out.println("Retrieving recipe generation keywords from DynamoDB...");
+
+            DynamoDbTable<GenerationData> table = this.dynamoDBClientEnhanced.table(tableName, TableSchema.fromBean(GenerationData.class));
+            Iterator<GenerationData> results = table.scan().items().iterator();
+            return results;
+        }
+        catch (DynamoDbException e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            System.exit(1);
+        }
+
+        return null;
     }
 
     /**

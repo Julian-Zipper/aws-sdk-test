@@ -1,59 +1,54 @@
 package com.example.sdktest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class RecipeGenerator {
 
-    List<String> adjectives;
-    List<String> postModifiers;
-    List<String> vegetables;
-    List<String> proteins;
-    List<String> additions;
-    List<String> alongsides;
+    public static final String TABLE_NAME = "recipeGeneration";
 
+    Map<String, List<String>> keywords;
 
     public RecipeGenerator() {
-        this.populateLists();
+        this.keywords = new HashMap<>();
     }
 
     /**
-     * Populates lists of strings with ingredients/keywords
-     * TODO: save ingredients/keywords in its own DynamoDB Table, and extract them from there instead of using hardcoded values.
-     * TODO: break additions up in additions and spices
+     * Initializes the Recipe generator - loads necessary keyword from database
+     * @param dynamoDBApp DynamoDBApp instance needed to populate keywords from database
      */
-    public void populateLists() {
-        adjectives = Arrays.asList(
-            "Delicious", "Funky", "Must-have", "Finger-lickin", "Simply the best", "Glazed", "Roasted", "Oven-baked", "Quick&dirty",
-            "Easy-peasy", "Healthy", "Pickled", "Supreme"
-        );
+    public void init(DynamoDBApp dynamoDBApp) {
+        System.out.println("Initializing Recipe Generator");
+        this.populateWordLists(dynamoDBApp.getGenerationData(TABLE_NAME));
+        System.out.println("Recipe Generator ready to cook up some recipes");
+        System.out.printf("%n");
+    }
 
-        postModifiers = Arrays.asList(
-            "a la chef", "burger", "salad", "poke bowl", "stir-fry", "soup", "stew", "casserole", "sauce","breakfest", "dinner",
-            "rolls", "sandwich", "curry", "mash-up"
-        );
+    /**
+     * Processes DynamoDB Scan result into keywords loaded into lists of strings
+     * @param tableData result from DynamoDBClient scan on entire generationData table
+     */
+    public void populateWordLists(Iterator<GenerationData> tableData) {
+        if(tableData != null) {
+            System.out.println("Populating RecipeGenerator with keywords...");
+            tableData.forEachRemaining((generationData) -> fillKeywords(generationData));
+        }
+        else {
+            System.out.println("Something went wrong with retrieving the RecipeGeneration Table Data");
+        }
+    }
 
-        vegetables = Arrays.asList(
-            "tomato", "potato", "carrot", "lettuce", "spinach", "kale", "onion", "leek", "mushroom", "garlic", "celery", "corn",
-            "cauliflower", "broccoli", "peas", "sugar snap", "bell pepper", "chili pepper", "avocado"
-        );
-
-        proteins = Arrays.asList(
-            "chicken", "beef", "tofu", "tempeh", "bean", "halloumi", "mozzerella"
-        );
-
-        additions = Arrays.asList(
-            "feta cheese", "parmesan cheese", "flour", "cornstarch", "cashew", "pine nut", "thyme", "basil", "spring onion", "honey",
-            "tomato paste", "soy sauce", "lemon juice", "mayo", "greek yoghurt", "creme fraiche", "balsamic vinegar", "cumin",
-            "parsley", "turmeric", "MSG"
-        );
-
-        alongsides = Arrays.asList(
-            "pasta", "quinoa", "rice", "bulgur", "fries", "sweet potato fries", "mashed potatoes", "toast", "naan", "fries", "chips",
-            "tortillas", "bread", "flatbread", "salad", "dip", "tomato soup", "vegetable soup", "BBQ sauce", "ketchup", "sriracha"
-        );
+    /**
+     * Processes one item from the DynamoDB recipeGeneration table into the Keyword Map.
+     * Keyword map is then used for recipe generation
+     * @param data item from recipeGeneration table. Contains a category, and a list of keywords
+     */
+    public void fillKeywords(GenerationData data) {
+        keywords.put(data.getCategory(), data.getWords());
     }
 
     /**
@@ -63,19 +58,29 @@ public class RecipeGenerator {
         System.out.println("Generating new recipe...");
 
         List<String> ingredients = new ArrayList<String>();
-        ingredients.addAll(getRandom(vegetables, 4));
-        ingredients.addAll(getRandom(proteins, 2));
-        String mainIngredient = getRandom(ingredients); // main ingredient is always a vegetable/protein, not an additional ingredient
-        ingredients.addAll(getRandom(additions, 5));
-
-        String recipeName = String.format("%s %s %s", getRandom(adjectives), mainIngredient, getRandom(postModifiers));
-        List<String> servingSuggestions = getRandom(alongsides, 2);
+        ingredients.addAll(getRandom(this.keywords.get("vegetables"), 4));
+        ingredients.addAll(getRandom(this.keywords.get("proteins"), 2));
+        String recipeName = randomRecipeName(ingredients);
+        ingredients.addAll(getRandom(this.keywords.get("additions"), 5));
+        List<String> servingSuggestions = getRandom(this.keywords.get("alongsides"), 2);
 
         Recipe recipe = new Recipe(recipeName, ingredients, servingSuggestions);
-
         recipe.print();
-
+        System.out.printf("%n");
+        
         return recipe;
+    }
+
+    /**
+     * recipe name is generated with vegetables/proteins in the ingredient list only.
+     * Main ingredient will be feature in the name, and a main ingredient should always be a vegetable/protein.
+     */
+    public String randomRecipeName(List<String> ingredients) {
+        String mainIngredient = getRandom(ingredients);
+        String adjective = getRandom(this.keywords.get("adjectives"));
+        String postModifier = getRandom(this.keywords.get("postModifiers"));
+        String recipeName = String.format("%s %s %s", adjective, mainIngredient, postModifier);
+        return recipeName;
     }
 
      /**
