@@ -14,6 +14,7 @@
 1. Close and Relaunch VSCode, to no avail (x4)
 3. ?????
 4. :sos:
+5. `ctrl+p`, enter `>` then `reload`. select the reload windows option (`ctrl+r` doesn't work at all). This helps 99% of the time :octocat:
 
 ### Next steps
 - ~~refactor recipe generation to own class~~
