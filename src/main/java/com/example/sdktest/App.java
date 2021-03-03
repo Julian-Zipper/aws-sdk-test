@@ -15,8 +15,8 @@ public class App
 
         recipeGenerator.init(dynamoDBApp);
 
+        dynamoDBApp.scanTable("recipes");
         dynamoDBApp.putRecipe("recipes", recipeGenerator.randomRecipe());
-
         dynamoDBApp.finishUp();
         
         System.out.printf("%n");
