@@ -1,12 +1,21 @@
-### Running the code:
+### Running the code :sun_with_face:
 1. `mvn package`
 2. `mvn exec:java` (everytime you want to run the code)
 3. or a oneliner: `mvn package exec:java`
 
-### Checking to see if everything compiles:
+
+### Checking to see if everything compiles
 1. `mvn clean validate`
 2. `mvn compile`
 3. or a oneliner: `mvn clean validate compile`
+
+### initial setup :seedling:
+1. To even run this code, AWS credentials are needed.
+2. AWS Documentation on the subject: [link](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
+3. for now, setting up a `[default]` credentials file in `~/.aws/credentials` seems to work fine. 
+4. Dynamo Tables need to be set up in AWS. 5 read/write units + 25GB DynamoDB storage are [free-tier eligible](https://aws.amazon.com/dynamodb/pricing/)
+5. Currently using a `recipes` table, and a `recipegeneration` table pre-populated with some keywords and categories.
+
 
 ### How to get VSCode intellisense to work properly
 1. Close and Relaunch VSCode, to no avail
@@ -29,7 +38,7 @@
 - send a mail from this trigger (SES, SNS)
 - send a mail at the start of the week with the dinner weekplanning (or manually with the SDK for SES and a call in the code, or through the backend/API)
 
-## Future steps
+## Future steps :alien:
 - backend/API to interact with the database, where calls can be made to Create/Update/Delete Recipes, ingredients, grocery lists, etc.
 - frontend to interact with the backend/API, where you can create new Recipes, grocery lists, tweak the recipe generator, etc.
 
