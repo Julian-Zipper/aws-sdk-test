@@ -17,14 +17,8 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <!--Dependencies:-->
+
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -51,9 +45,58 @@
       <groupId>com.amazonaws</groupId>
       <artifactId>DynamoDBLocal</artifactId>
       <version>[1.12,2.0)</version>
-   </dependency>
+    </dependency>
+    <!--Testing dependencies-->
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-runner</artifactId>
+      <version>1.2.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-migrationsupport</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>2.21.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.8.0</version>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
-  <!--Custom repository:-->
+  
   <repositories>
     <repository>
       <id>dynamodb-local-oregon</id>
@@ -61,6 +104,7 @@
       <url>https://s3.eu-central-1.amazonaws.com/dynamodb-local-frankfurt/release</url>
     </repository>
   </repositories>
+  
   <build>
     <plugins>
       <plugin>
@@ -80,6 +124,25 @@
             <mainClass>com.example.sdktest.App</mainClass>
         </configuration>
     </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-dependency-plugin</artifactId>
+      <version>2.10</version>
+      <executions>
+          <execution>
+              <id>copy</id>
+              <phase>test-compile</phase>
+              <goals>
+                  <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                  <includeScope>test</includeScope>
+                  <includeTypes>so,dll,dylib</includeTypes>
+                  <outputDirectory>${project.basedir}/native-libs</outputDirectory>
+              </configuration>
+          </execution>
+      </executions>
+  </plugin>
     </plugins>
   </build>
 </project>
