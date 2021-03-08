@@ -50,6 +50,8 @@
 - Java Annotations for DynamoDB: [link](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.Annotations.html)
 - AWS SDK examples for Enhanced DynamoDB client: [link](https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/javav2/example_code/dynamodb/src/main/java/com/example/dynamodb)
 - Running DynamoDB locally: [link](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
+- Stackoverflow answer with some QOL fixes for DynamoDbLocal: [link](https://stackoverflow.com/questions/26901613/easier-dynamodb-local-testing)
+- Baaldung article on local testing with DynamoDbLocal. Some fixes & QOL fixes: [link](https://www.baeldung.com/dynamodb-local-integration-tests)
 
 ### Some relevant Spring info:
 - DynamoDB in Spring Boot App using Spring Data: [link](https://www.baeldung.com/spring-data-dynamodb)
